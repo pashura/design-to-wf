@@ -3,7 +3,7 @@ package xd_service
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pashura/design-to-wf/api/design_to_xtl_service"
+	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -11,29 +11,38 @@ import (
 
 const url = "https://xd.spsdev.in/xd/map"
 
-const token = ""
-
 type Payload struct {
-	Message    string                        `json:"message"`
-	Output     design_to_xtl_service.XtlSide `json:"output"`
-	Input      string                        `json:"input"`
-	Infile     string                        `json:"infile"`
-	Outfile    string                        `json:"outfile"`
-	InfileNew  string                        `json:"infile_new"`
-	OutfileNew string                        `json:"outfile_new"`
+	Message    string              `json:"message"`
+	Output     xtl_structs.XtlSide  `json:"output,omitempty"`
+	Input      xtl_structs.XtlSide `json:"input"`
+	Infile     string              `json:"infile"`
+	Outfile    string              `json:"outfile"`
+	InfileNew  string              `json:"infile_new"`
+	InfileRm   bool				   `json:"infile_rm"`
+	OutfileNew string             `json:"outfile_new"`
+	OutfileRm  bool				   `json:"outfile_rm"`
+	Overwrite  bool				   `json:"overwrite"`
+	Files      []string			   `json:"files"`
+	//ForkedBranch string				`json:"forked_branch"`
 }
 
-func XDService(xtl design_to_xtl_service.XtlSide, repo string, branch string, filename string) {
+func XDService(xtl xtl_structs.Xtl, token string) {
 
-	var url = fmt.Sprintf("%s/%s/%s", url, repo, branch)
+	var url = fmt.Sprintf("%s/%s/%s", url, "testDesignToWf.web", "my_awsome_branch")
 
 	payload := &Payload{
 		Message:   "Generated from design",
-		Input:     "",
-		Output:    xtl,
-		Infile:    "",
-		InfileNew: "",
-		Outfile:   filename,
+		Input:     xtl.Input,
+		Output:    xtl.Input,
+		Infile:    "invoiceTest.xtl",
+		InfileNew: "invoiceTest.xtl",
+		InfileRm:  false,
+		OutfileRm: false,
+		Overwrite: false,
+		Outfile: "invoiceTestIN.xtl",
+		OutfileNew: "invoiceTestIN.xtl",
+		Files: []string{},
+		//ForkedBranch: "master",
 	}
 	e, err := json.Marshal(payload)
 

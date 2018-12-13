@@ -10,15 +10,14 @@ import (
 	"os"
 )
 
-
-func S3Service(filename string, bucket string, key string)  {
+func S3Service(filename string, bucket string, key string) {
 
 	// Initial credentials loaded from SDK's default credential chain, such as
 	// the environment, shared credentials (~/.aws/credentials)
 	// Role. These credentials are used to make the AWS STS Assume Role API.
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
-		SharedConfigState: session.SharedConfigEnable,
+		SharedConfigState:       session.SharedConfigEnable,
 	}))
 
 	downloader := s3manager.NewDownloader(sess)

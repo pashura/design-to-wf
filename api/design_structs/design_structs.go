@@ -1,6 +1,5 @@
 package design_structs
 
-
 type Design struct {
 	HasEnum     bool         `json:"hasEnum"`
 	Name        string       `json:"name"`
@@ -20,7 +19,7 @@ type Object struct {
 	ElementType         string              `json:"elementType"`
 	DisplayName         string              `json:"displayName"`
 	MinOccurs           string              `json:"minOccurs"`
-	MaxOccurs			string				`json:"maxOccurs"`
+	MaxOccurs           string              `json:"maxOccurs"`
 	MinLength           string              `json:"minLength"`
 	ID                  int64               `json:"id"`
 	Visible             bool                `json:"visible"`

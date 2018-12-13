@@ -8,13 +8,12 @@ import (
 	"net/http"
 )
 
-
 const url = "https://design-ui-api.dev.spsc.io/company_designs"
 
 func DesignObject(orgId string, designName string, token string) design_structs.Design {
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/Companies/%s/Designs/%s.json", url, orgId, designName), nil)
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 
@@ -26,19 +25,19 @@ func DesignObject(orgId string, designName string, token string) design_structs.
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	var data interface{}
 	err = json.Unmarshal(body, &data)
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	rawDesign := design_structs.Design{}
 	err = json.Unmarshal([]byte(data.(string)), &rawDesign)
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 
