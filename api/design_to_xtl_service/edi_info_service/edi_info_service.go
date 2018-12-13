@@ -5,7 +5,7 @@ import "strings"
 func EdiInfo(designName string) (segmentTag, position, subPos string) {
 	ediInfoChunks := strings.Split(designName, "-")
 	segmWithPosition := ediInfoChunks[0]
-	if len(ediInfoChunks) > 1{
+	if len(ediInfoChunks) > 1 {
 		subPos = ediInfoChunks[1]
 	}
 	if len(segmWithPosition) > 1 {

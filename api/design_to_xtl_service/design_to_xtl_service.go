@@ -5,6 +5,7 @@ import (
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
+	"github.com/pashura/design-to-wf/api/names_service"
 	"strings"
 	"time"
 )
@@ -131,7 +132,8 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
-	atts.JavaName = "groupJavaNames"
+	atts.Name = names_service.CreateName(designObject.Name)
+	atts.JavaName = names_service.CreateJavaName(designObject.Name)
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
@@ -150,7 +152,6 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 		atts.Mandatory = "N"
 	}
 	atts.Edi = "Y"
-	atts.JavaName = "javaNames"
 	atts.Enable = "Y"
 	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"
@@ -158,6 +159,8 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Display = "Y"
 	atts.DefaultValue = designObject.DefaultValue
 	if len(designObject.Attributes) > 0 {
+		atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
+		atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
 		atts.ReferenceNum = designObject.Attributes[0].EDIid
 		atts.DataType = DATA_TYPES[designObject.Attributes[0].DisplayName]
 	}
