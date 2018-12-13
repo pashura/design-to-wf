@@ -62,6 +62,7 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	expField.Atts.Display = "Y"
 	expField.Atts.MinLength = "1"
 	expField.Atts.MaxLength = "8"
+	expField.Atts.Mandatory = "N"
 	expField.Name = "FIELDDEF"
 	expGroup.Children = []xtl_structs.Element{expField}
 	testDesign := design_structs.Design{}
@@ -76,6 +77,6 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	resultXtl := ConvertDesignToXtl(testDesign)
 
 	if !reflect.DeepEqual(resultXtl.Input.Children[0].Children[0], expGroup) {
-		t.Error(resultXtl.Input.Children[0].Children[0], expGroup)
+		t.Errorf("\nexpected: %v\n  actual: %v", resultXtl.Input.Children[0].Children[0], expGroup)
 	}
 }
