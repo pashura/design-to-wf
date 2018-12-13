@@ -3,6 +3,7 @@ package design_to_xtl_service
 import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
+	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
@@ -121,7 +122,8 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
-	//atts.JavaName = generate!!!!
+	atts.Name = names_service.CreateName(designObject.Name)
+	atts.JavaName = names_service.CreateJavaName(designObject.Name)
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
@@ -136,7 +138,8 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	//atts.Mandatory = designObject.Mandatory
 	atts.Edi = "Y"
-	//atts.JavaName = generate!!!!
+	atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
+	atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
 	atts.Enable = "Y"
 	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"

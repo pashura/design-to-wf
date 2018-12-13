@@ -11,8 +11,9 @@ import (
 )
 
 
-func S3Service(filename string, bucket string, key string)  {
+func S3Service(bucket string, key string)  {
 
+	FILENAME := "api/jackalope_service/schema.xsd"
 	// Initial credentials loaded from SDK's default credential chain, such as
 	// the environment, shared credentials (~/.aws/credentials)
 	// Role. These credentials are used to make the AWS STS Assume Role API.
@@ -23,9 +24,9 @@ func S3Service(filename string, bucket string, key string)  {
 
 	downloader := s3manager.NewDownloader(sess)
 
-	f, err := os.Create(filename)
+	f, err := os.Create(FILENAME)
 	if err != nil {
-		fmt.Printf("failed to create file %q, %v", filename, err)
+		fmt.Printf("failed to create file %q, %v", FILENAME, err)
 	}
 
 	n, err := downloader.Download(f, &s3.GetObjectInput{
@@ -35,5 +36,5 @@ func S3Service(filename string, bucket string, key string)  {
 	if err != nil {
 		fmt.Printf("failed to download file, %v", err)
 	}
-	fmt.Printf("file %v downloaded, %d bytes\n", filename, n)
+	fmt.Printf("file %v downloaded, %d bytes\n", FILENAME, n)
 }

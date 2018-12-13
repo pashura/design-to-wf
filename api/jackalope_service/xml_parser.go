@@ -36,8 +36,10 @@ func isInt(s string) bool {
 }
 
 
-func Documentation(filename string, ref string) string {
-	xmlFile, err := os.Open(filename)
+func Documentation(ref string) string {
+	FILENAME := "api/jackalope_service/schema.xsd"
+
+	xmlFile, err := os.Open(FILENAME)
 	if err != nil {
 		fmt.Println(err)
 	}
