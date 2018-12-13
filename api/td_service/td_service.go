@@ -3,84 +3,15 @@ package td_service
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pashura/design-to-wf/api/design_structs"
 	"io/ioutil"
 	"net/http"
 )
 
-type Design struct {
-	HasEnum     bool         `json:"hasEnum"`
-	Name        string       `json:"name"`
-	ElementType string       `json:"elementType"`
-	Visible     bool         `json:"visible"`
-	MinOccurs   string       `json:"minOccurs"`
-	DesignMeta  DesignMeta   `json:"designMeta"`
-	Attributes  []Object     `json:"attributes"`
-	Validation  []Validation `json:"validation"`
-	Children    []Object     `json:"children"`
-}
-
-type Object struct {
-	HasEnum             bool                `json:"hasEnum"`
-	Base                string              `json:"base"`
-	Name                string              `json:"name"`
-	ElementType         string              `json:"elementType"`
-	DisplayName         string              `json:"displayName"`
-	MinOccurs           string              `json:"minOccurs"`
-	MinLength           string              `json:"minLength"`
-	ID                  int64               `json:"id"`
-	Visible             bool                `json:"visible"`
-	Qualifiers          string              `json:"qualifiers"`
-	EDIid               string              `json:"ediId"`
-	Validation          []Validation        `json:"validation"`
-	DesignMeta          DesignMeta          `json:"designMeta"`
-	QualifierConditions QualifierConditions `json:"qualifierConditions"`
-	MaxLength           string              `json:"maxLength"`
-	EDIDataType         string              `json:"EDIDataType"`
-	DropExtraRecords    bool                `json:"dropExtraRecords"`
-	Attributes          []Object            `json:"attributes"`
-	Children            []Object            `json:"children"`
-}
-type DesignMeta struct {
-	Tag          string     `json:"tag"`
-	HiddenSchema Schematype `json:"hiddenSchema"`
-	ViewedSchema Schematype `json:"viewedSchema"`
-}
-
-type Schematype struct {
-	Source   bool   `json:"source"`
-	Version  string `json:"version"`
-	Document string `json:"document"`
-	Format   string `json:"format"`
-	OrgName  string `json:"orgName"`
-}
-
-type Validation struct {
-	Rules      []Conditions `json:"rules"`
-	Type       string       `json:"type"`
-	Conditions []Conditions `json:"conditions"`
-	Results    []Conditions `json:"results"`
-}
-
-type Conditions struct {
-	Conjunction            string                   `json:"conjunction"`
-	ConditionsInConditions []ConditionsInConditions `json:"conditions"`
-}
-
-type ConditionsInConditions struct {
-	Condition string `json:"condition"`
-	Value     string `json:"value"`
-	Element   string `json:"element"`
-}
-
-type QualifierConditions struct {
-	Converts  string `json:"converts"`
-	Qualifier string `json:"qualifier"`
-	MinOccurs string `json:"minOccurs"`
-}
 
 const url = "https://design-ui-api.dev.spsc.io/company_designs"
 
-func DesignObject(orgId string, designName string, token string) Design {
+func DesignObject(orgId string, designName string, token string) design_structs.Design {
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/Companies/%s/Designs/%s.json", url, orgId, designName), nil)
 	if err != nil{
@@ -105,7 +36,7 @@ func DesignObject(orgId string, designName string, token string) Design {
 		fmt.Println(err.Error())
 	}
 
-	rawDesign := Design{}
+	rawDesign := design_structs.Design{}
 	err = json.Unmarshal([]byte(data.(string)), &rawDesign)
 	if err != nil{
 		fmt.Println(err.Error())
@@ -114,8 +45,8 @@ func DesignObject(orgId string, designName string, token string) Design {
 	return rawDesign
 }
 
-func RemoveNonVisible(design Design) Design {
-	newDesign := Design{}
+func RemoveNonVisible(design design_structs.Design) design_structs.Design {
+	newDesign := design_structs.Design{}
 
 	newDesign.Name = design.Name
 	newDesign.HasEnum = design.HasEnum
@@ -129,8 +60,8 @@ func RemoveNonVisible(design Design) Design {
 	return newDesign
 }
 
-func createChildren(childrenObject Object) Object {
-	newChildrenObject := Object{}
+func createChildren(childrenObject design_structs.Object) design_structs.Object {
+	newChildrenObject := design_structs.Object{}
 
 	newChildrenObject.Visible = childrenObject.Visible
 	newChildrenObject.ElementType = childrenObject.ElementType
@@ -157,9 +88,9 @@ func createChildren(childrenObject Object) Object {
 	return newChildrenObject
 }
 
-func appendChildren(childrenObject []Object) []Object {
+func appendChildren(childrenObject []design_structs.Object) []design_structs.Object {
 
-	newChildrenObject := []Object{}
+	var newChildrenObject []design_structs.Object
 	for _, i := range childrenObject {
 		if i.Visible == true {
 			newChildrenObject = append(newChildrenObject, createChildren(i))
