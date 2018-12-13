@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"unicode"
 )
 
@@ -53,6 +54,8 @@ func Documentation(filename string, ref string) string {
 
 	if isInt(ref){
 		searchedName = fmt.Sprintf("Element-%s", ref)
+	} else if strings.HasPrefix(ref, "Transaction"){
+		searchedName = ref
 	} else {
 		searchedName = fmt.Sprintf("Segment-%s", ref)
 	}
