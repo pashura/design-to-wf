@@ -55,6 +55,7 @@ func RemoveNonVisible(design design_structs.Design) design_structs.Design {
 	newDesign.Visible = design.Visible
 	newDesign.MinOccurs = design.MinOccurs
 	newDesign.Attributes = design.Attributes
+	newDesign.Validation = design.Validation
 	newDesign.Children = appendChildren(design.Children)
 
 	return newDesign
@@ -81,9 +82,8 @@ func createChildren(childrenObject design_structs.Object) design_structs.Object 
 	newChildrenObject.Attributes = childrenObject.Attributes
 	newChildrenObject.QualifierConditions = childrenObject.QualifierConditions
 	newChildrenObject.Qualifiers = childrenObject.Qualifiers
+	newChildrenObject.Validation = childrenObject.Validation
 	newChildrenObject.Children = appendChildren(childrenObject.Children)
-
-	fmt.Println(newChildrenObject)
 
 	return newChildrenObject
 }
