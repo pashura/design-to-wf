@@ -8,9 +8,7 @@ import (
 )
 
 type SchemaEnums interface {
-
 }
-
 
 func GetSchemaEnums(fileType string, version string, fileName string, groupName string, elementName string, token string) SchemaEnums {
 
@@ -22,7 +20,7 @@ func GetSchemaEnums(fileType string, version string, fileName string, groupName 
 		panic(err.Error())
 	}
 
-	req.Header.Add("Authorization", "bearer " + token)
+	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 
 	res, _ := http.DefaultClient.Do(req)
@@ -33,7 +31,7 @@ func GetSchemaEnums(fileType string, version string, fileName string, groupName 
 	if err != nil {
 		panic(err.Error())
 	}
-	var data interface {}
+	var data interface{}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		panic(err.Error())

@@ -8,7 +8,6 @@ import (
 	"testing"
 )
 
-
 func TestConvertDesignToXtlBaseChecks(t *testing.T) {
 
 	hiddenMeta := design_structs.Schematype{OrgName: "TEST_ORG_NAME"}

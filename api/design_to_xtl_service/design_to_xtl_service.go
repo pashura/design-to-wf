@@ -121,7 +121,7 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
-	//atts.JavaName = generate!!!!
+	atts.JavaName = "groupJavaNames"
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
@@ -136,7 +136,7 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	//atts.Mandatory = designObject.Mandatory
 	atts.Edi = "Y"
-	//atts.JavaName = generate!!!!
+	atts.JavaName = "javaNames"
 	atts.Enable = "Y"
 	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"
