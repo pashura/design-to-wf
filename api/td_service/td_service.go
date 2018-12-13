@@ -11,11 +11,11 @@ type Design interface {
 
 }
 
+const url = "https://design-ui-api.dev.spsc.io/company_designs"
+
 func GetDesign(orgId string, designName string, token string) Design {
 
-	baseUrl := "https://design-ui-api.dev.spsc.io/company_designs"
-
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/Companies/%s/Designs/%s.json", baseUrl, orgId, designName), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/Companies/%s/Designs/%s.json", url, orgId, designName), nil)
 
 	if err != nil {
 		panic(err.Error())
@@ -41,32 +41,3 @@ func GetDesign(orgId string, designName string, token string) Design {
 
 	return data
 }
-
-
-//func MarshalOnlyFields(structa interface{},
-//	includeFields map[string]bool) (jsona []byte, status error) {
-//	value := reflect.ValueOf(structa)
-//	typa := reflect.TypeOf(structa)
-//	size := value.NumField()
-//	jsona = append(jsona, '{')
-//	for i := 0; i < size; i++ {
-//		structValue := value.Field(i)
-//		var fieldName string = typa.Field(i).Name
-//		if marshalledField, marshalStatus := json.Marshal((structValue).Interface()); marshalStatus != nil {
-//			return []byte{}, marshalStatus
-//		} else {
-//			if includeFields[fieldName] {
-//				jsona = append(jsona, '"')
-//				jsona = append(jsona, []byte(fieldName)...)
-//				jsona = append(jsona, '"')
-//				jsona = append(jsona, ':')
-//				jsona = append(jsona, (marshalledField)...)
-//				if i+1 != len(includeFields) {
-//					jsona = append(jsona, ',')
-//				}
-//			}
-//		}
-//	}
-//	jsona = append(jsona, '}')
-//	return
-//}

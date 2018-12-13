@@ -11,7 +11,7 @@ func TestDocumentation(t *testing.T) {
 	var elementID = "143"
 	var segmentRef = "ST"
 
-	var expectedElementName = "Transaction Set Identifier Code "
+	var expectedElementName = "Transaction Set Identifier Code"
 	var expectedSegmentName = "Transaction Set Header"
 
 	if os.Getenv("DRONE") == "true" {
