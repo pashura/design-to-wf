@@ -13,3 +13,6 @@
 
 # folders to exclude
 .idea/*
+
+# files to exclude
+api/jackalope_service/schema.xsd
