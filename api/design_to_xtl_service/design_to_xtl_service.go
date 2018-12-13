@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/names_service"
+	"github.com/pashura/design-to-wf/api/edi_info_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
@@ -145,5 +146,6 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Editable = "Y"
 	atts.MaxLength = designObject.MaxLength
 	atts.Display = "Y"
+	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
 }

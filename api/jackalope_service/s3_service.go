@@ -10,7 +10,6 @@ import (
 	"os"
 )
 
-
 func S3Service(bucket string, key string)  {
 
 	FILENAME := "api/jackalope_service/schema.xsd"
@@ -19,7 +18,7 @@ func S3Service(bucket string, key string)  {
 	// Role. These credentials are used to make the AWS STS Assume Role API.
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
-		SharedConfigState: session.SharedConfigEnable,
+		SharedConfigState:       session.SharedConfigEnable,
 	}))
 
 	downloader := s3manager.NewDownloader(sess)
@@ -36,5 +35,7 @@ func S3Service(bucket string, key string)  {
 	if err != nil {
 		fmt.Printf("failed to download file, %v", err)
 	}
+
 	fmt.Printf("file %v downloaded, %d bytes\n", FILENAME, n)
 }
+
