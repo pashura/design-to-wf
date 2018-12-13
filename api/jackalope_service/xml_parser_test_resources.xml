@@ -1,0 +1,14 @@
+<xsd:schema>
+    <xsd:element name="Segment-ST">
+        <xsd:annotation>
+            <xsd:documentation>Transaction Set Header</xsd:documentation>
+            <xsd:documentation>To indicate the start of a transaction set and to assign a control number</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="Element-143">
+        <xsd:annotation>
+            <xsd:documentation>Transaction Set Identifier Code</xsd:documentation>
+            <xsd:documentation>Code uniquely identifying a Transaction Set</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+</xsd:schema>
