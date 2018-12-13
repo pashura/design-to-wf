@@ -3,8 +3,8 @@ package design_to_xtl_service
 import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
-	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/edi_info_service"
+	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
