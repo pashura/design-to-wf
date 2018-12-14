@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
-	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"github.com/pashura/design-to-wf/api/names_service"
+	"github.com/pashura/design-to-wf/api/schema_enum_service"
+	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
 )
@@ -13,6 +14,8 @@ import (
 var JAVA_PACKAGE_NAME string
 var SYS_DATE string
 var DATA_TYPES map[string]string
+
+var currentGroup design_structs.Object
 
 func ConvertDesignToXtl(design design_structs.Design) xtl_structs.Xtl {
 	setupConstants(design)
@@ -23,12 +26,12 @@ func setupConstants(design design_structs.Design) {
 	JAVA_PACKAGE_NAME = buildJavaPackageName(design.DesignMeta.HiddenSchema.OrgName)
 	SYS_DATE = time.Now().Format("01/02/2006")
 	DATA_TYPES = map[string]string{
-		"String": "JString",
+		"String":    "JString",
 		"StringSet": "JMappedSet",
-		"Time": "JTime",
-		"Date": "JDate",
-		"Integer": "JInteger",
-		"Decimal": "JDouble",
+		"Time":      "JTime",
+		"Date":      "JDate",
+		"Integer":   "JInteger",
+		"Decimal":   "JDouble",
 	}
 }
 func buildJavaPackageName(orgName string) string {
@@ -117,6 +120,7 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 		newGroup.Atts = createGroupAtts(designObject)
 		newGroup.Name = "GROUPDEF"
 		for i := range designObject.Children {
+			currentGroup = designObject
 			child := designObject.Children[i]
 			newGroup.Children = append(newGroup.Children, createGroup(child))
 		}
@@ -138,7 +142,7 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
 	atts.Name = names_service.CreateName(designObject.Name)
-	atts.JavaName = names_service.CreateJavaName(designObject.Name)
+	atts.JavaName = names_service.CreateJavaName(designObject.Name, currentGroup.Name)
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
@@ -165,10 +169,28 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.DefaultValue = designObject.DefaultValue
 	if len(designObject.Attributes) > 0 {
 		atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
-		atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
+		atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid, currentGroup.Name)
 		atts.ReferenceNum = designObject.Attributes[0].EDIid
 		atts.DataType = DATA_TYPES[designObject.Attributes[0].DisplayName]
+		if designObject.Attributes[0].HasEnum {
+			atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
+		}
 	}
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
+}
+
+func qualifiers(elementName, qualifiers string) string {
+	groupName := fmt.Sprintf("Segment-%v", elementName[:len(elementName)-2])
+
+	result := make([]string, 0)
+	qualifierList := strings.Split(qualifiers, ",")
+	for i := 0; i < len(qualifierList); i++ {
+		qual := strings.TrimSpace(string(qualifierList[i]))
+		description := schema_enum_service.GetSchemaEnums(groupName, elementName, qual)
+		result = append(result, fmt.Sprintf("%v: %v", qual, description))
+	}
+	fmt.Println()
+
+	return strings.Join(result, ", ")
 }
