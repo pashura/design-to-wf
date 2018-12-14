@@ -5,6 +5,7 @@ import (
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/edi_info_service"
 	"github.com/pashura/design-to-wf/api/names_service"
+	"github.com/pashura/design-to-wf/api/schema_enum_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
@@ -146,6 +147,24 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Editable = "Y"
 	atts.MaxLength = designObject.MaxLength
 	atts.Display = "Y"
+	if designObject.Attributes[0].HasEnum {
+		atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
+	}
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
+}
+
+func qualifiers(elementName, qualifiers string) string {
+	groupName := fmt.Sprintf("Segment-%v", elementName[:len(elementName)-2])
+
+	result := make([]string, 0)
+	qualifierList := strings.Split(qualifiers, ",")
+	for i := 0; i < len(qualifierList); i++ {
+		qual := strings.TrimSpace(string(qualifierList[i]))
+		description := schema_enum_service.GetSchemaEnums(groupName, elementName, qual)
+		result = append(result, fmt.Sprintf("%v: %v", qual, description))
+	}
+	fmt.Println()
+
+	return strings.Join(result, ", ")
 }

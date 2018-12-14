@@ -13,26 +13,26 @@ type Design struct {
 }
 
 type Object struct {
-	HasEnum             bool                `json:"hasEnum"`
-	Base                string              `json:"base"`
-	Name                string              `json:"name"`
-	ElementType         string              `json:"elementType"`
-	DisplayName         string              `json:"displayName"`
-	MinOccurs           string              `json:"minOccurs"`
-	MaxOccurs           string              `json:"maxOccurs"`
-	MinLength           string              `json:"minLength"`
-	ID                  int64               `json:"id"`
-	Visible             bool                `json:"visible"`
-	Qualifiers          string              `json:"qualifiers"`
-	EDIid               string              `json:"ediId"`
-	Validation          []Validation        `json:"validation"`
-	DesignMeta          DesignMeta          `json:"designMeta"`
-	QualifierConditions QualifierConditions `json:"qualifierConditions"`
-	MaxLength           string              `json:"maxLength"`
-	EDIDataType         string              `json:"EDIDataType"`
-	DropExtraRecords    bool                `json:"dropExtraRecords"`
-	Attributes          []Object            `json:"attributes"`
-	Children            []Object            `json:"children"`
+	HasEnum             bool                 `json:"hasEnum"`
+	Base                string               `json:"base"`
+	Name                string               `json:"name"`
+	ElementType         string               `json:"elementType"`
+	DisplayName         string               `json:"displayName"`
+	MinOccurs           string               `json:"minOccurs"`
+	MaxOccurs           string               `json:"maxOccurs"`
+	MinLength           string               `json:"minLength"`
+	ID                  int64                `json:"id"`
+	Visible             bool                 `json:"visible"`
+	Qualifiers          string               `json:"qualifiers"`
+	EDIid               string               `json:"ediId"`
+	Validation          []Validation         `json:"validation"`
+	DesignMeta          DesignMeta           `json:"designMeta"`
+	QualifierConditions []QualifierCondition `json:"qualifierConditions"`
+	MaxLength           string               `json:"maxLength"`
+	EDIDataType         string               `json:"EDIDataType"`
+	DropExtraRecords    bool                 `json:"dropExtraRecords"`
+	Attributes          []Object             `json:"attributes"`
+	Children            []Object             `json:"children"`
 }
 type DesignMeta struct {
 	Tag          string     `json:"tag"`
@@ -66,8 +66,8 @@ type ConditionsInConditions struct {
 	Element   string `json:"element"`
 }
 
-type QualifierConditions struct {
+type QualifierCondition struct {
 	Converts  string `json:"converts"`
 	Qualifier string `json:"qualifier"`
-	MinOccurs string `json:"minOccurs"`
+	MinOccurs int    `json:"minOccurs"`
 }
