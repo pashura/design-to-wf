@@ -35,6 +35,7 @@ type Object struct {
 	Attributes          []Object             `json:"attributes"`
 	Children            []Object             `json:"children"`
 }
+
 type DesignMeta struct {
 	Tag          string     `json:"tag"`
 	HiddenSchema Schematype `json:"hiddenSchema"`
