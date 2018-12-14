@@ -13,36 +13,33 @@ const url = "https://xd.spsdev.in/xd/map"
 
 type Payload struct {
 	Message    string              `json:"message"`
-	Output     xtl_structs.XtlSide  `json:"output,omitempty"`
+	Output     map[string]int      `json:"output"`
 	Input      xtl_structs.XtlSide `json:"input"`
 	Infile     string              `json:"infile"`
 	Outfile    string              `json:"outfile"`
 	InfileNew  string              `json:"infile_new"`
-	InfileRm   bool				   `json:"infile_rm"`
-	OutfileNew string             `json:"outfile_new"`
-	OutfileRm  bool				   `json:"outfile_rm"`
-	Overwrite  bool				   `json:"overwrite"`
-	Files      []string			   `json:"files"`
-	//ForkedBranch string				`json:"forked_branch"`
+	InfileRm   bool                `json:"infile_rm"`
+	OutfileNew string              `json:"outfile_new"`
+	OutfileRm  bool                `json:"outfile_rm"`
+	Overwrite  bool                `json:"overwrite"`
+	Files      []string            `json:"files,omitempty"`
 }
 
-func XDService(xtl xtl_structs.Xtl, token string) {
+func XDService(xtl xtl_structs.Xtl, repo string, branch string, token string) {
 
-	var url = fmt.Sprintf("%s/%s/%s", url, "testDesignToWf.web", "my_awsome_branch")
+	var url = fmt.Sprintf("%s/%s/%s", url, repo, branch)
 
 	payload := &Payload{
-		Message:   "Generated from design",
-		Input:     xtl.Input,
-		Output:    xtl.Input,
-		Infile:    "invoiceTest.xtl",
-		InfileNew: "invoiceTest.xtl",
-		InfileRm:  false,
-		OutfileRm: false,
-		Overwrite: false,
-		Outfile: "invoiceTestIN.xtl",
-		OutfileNew: "invoiceTestIN.xtl",
-		Files: []string{},
-		//ForkedBranch: "master",
+		Message:    "Generated from design",
+		Input:      xtl.Input,
+		Output:     make(map[string]int, 1),
+		Infile:     "invoiceTestIN.xtl",
+		InfileNew:  "invoiceTestIN.xtl",
+		InfileRm:   false,
+		OutfileRm:  false,
+		Overwrite:  false,
+		Outfile:    "",
+		OutfileNew: "",
 	}
 	e, err := json.Marshal(payload)
 

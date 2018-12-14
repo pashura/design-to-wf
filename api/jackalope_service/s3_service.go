@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func S3Service(bucket string, key string)  {
+func S3Service(bucket string, key string) {
 
 	FILENAME := "api/jackalope_service/schema.xsd"
 	// Initial credentials loaded from SDK's default credential chain, such as
@@ -38,4 +38,3 @@ func S3Service(bucket string, key string)  {
 
 	fmt.Printf("file %v downloaded, %d bytes\n", FILENAME, n)
 }
-
