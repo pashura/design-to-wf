@@ -162,9 +162,7 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	}
 	atts.Edi = "Y"
 	atts.Enable = "Y"
-	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"
-	atts.MaxLength = designObject.MaxLength
 	atts.Display = "Y"
 	atts.DefaultValue = designObject.DefaultValue
 	if len(designObject.Attributes) > 0 {
@@ -175,6 +173,8 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 		if designObject.Attributes[0].HasEnum {
 			atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
 		}
+		atts.MinLength = designObject.Attributes[0].MinLength
+		atts.MaxLength = designObject.Attributes[0].MaxLength
 	}
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
