@@ -13,6 +13,8 @@ import (
 var JAVA_PACKAGE_NAME string
 var SYS_DATE string
 
+var currentGroup design_structs.Object
+
 func ConvertDesignToXtl(design design_structs.Design) xtl_structs.Xtl {
 	setupConstants(design)
 	return createXtl(design)
@@ -103,6 +105,7 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 		newGroup.Atts = createGroupAtts(designObject)
 		newGroup.Name = "GROUPDEF"
 		for i := range designObject.Children {
+			currentGroup = designObject
 			child := designObject.Children[i]
 			newGroup.Children = append(newGroup.Children, createGroup(child))
 		}
@@ -124,7 +127,7 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
 	atts.Name = names_service.CreateName(designObject.Name)
-	atts.JavaName = names_service.CreateJavaName(designObject.Name)
+	atts.JavaName = names_service.CreateJavaName(designObject.Name, currentGroup.Name)
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
@@ -140,7 +143,7 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	//atts.Mandatory = designObject.Mandatory
 	atts.Edi = "Y"
 	atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
-	atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
+	atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid, currentGroup.Name)
 	atts.Enable = "Y"
 	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"
