@@ -23,7 +23,7 @@ func findExtraRecords(extraRecords *[]string, children []design_structs.Object, 
 	for _, child := range children {
 		if len(child.Children) > 0 {
 			ediPath = buildEdiPath(child, ediPath)
-			if child.DropExtraRecords && ifElementInSlice(ediPath, extraRecords) {
+			if child.DropExtraRecords && !ifElementInSlice(ediPath, extraRecords) {
 				*extraRecords = append(*extraRecords, ediPath)
 			}
 			findExtraRecords(extraRecords, child.Children, ediPath)
