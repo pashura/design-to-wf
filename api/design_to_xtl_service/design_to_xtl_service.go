@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
+	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/names_service"
+	"github.com/pashura/design-to-wf/api/properties"
 	"github.com/pashura/design-to-wf/api/schema_enum_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
@@ -17,13 +19,13 @@ var DATA_TYPES map[string]string
 
 var currentGroup design_structs.Object
 
-func ConvertDesignToXtl(design design_structs.Design) xtl_structs.Xtl {
-	setupConstants(design)
+func ConvertDesignToXtl(design design_structs.Design, javaPackageName string) xtl_structs.Xtl {
+	JAVA_PACKAGE_NAME = javaPackageName
+	setupConstants()
 	return createXtl(design)
 }
 
-func setupConstants(design design_structs.Design) {
-	JAVA_PACKAGE_NAME = buildJavaPackageName(design.DesignMeta.HiddenSchema.OrgName)
+func setupConstants() {
 	SYS_DATE = time.Now().Format("01/02/2006")
 	DATA_TYPES = map[string]string{
 		"String":    "JString",
@@ -33,18 +35,6 @@ func setupConstants(design design_structs.Design) {
 		"Integer":   "JInteger",
 		"Decimal":   "JDouble",
 	}
-}
-func buildJavaPackageName(orgName string) string {
-	companyNameChunks := strings.Split(orgName, "_")
-	for i, chunk := range companyNameChunks {
-		chunkInLower := strings.ToLower(chunk)
-		if i != 0 {
-			companyNameChunks[i] = strings.Title(chunkInLower)
-		} else {
-			companyNameChunks[i] = chunkInLower
-		}
-	}
-	return strings.Join(companyNameChunks, "")
 }
 
 func createXtl(design design_structs.Design) xtl_structs.Xtl {
@@ -79,19 +69,20 @@ func createDocumentDefAtts(design design_structs.Design) xtl_structs.Atts {
 		atts.Direction = "O"
 		atts.MaxSource = "1"
 		atts.Type = design.DesignMeta.ViewedSchema.Document
-		atts.Revision = design.DesignMeta.ViewedSchema.Version
 	} else {
 		atts.Direction = "I"
 		atts.MaxSource = "-1"
 		atts.Type = design.DesignMeta.HiddenSchema.Document
-		atts.Revision = design.DesignMeta.HiddenSchema.Version
 	}
+	atts.Revision = properties.Version
 	atts.DesignDate = SYS_DATE
 	atts.JavaPackageName = JAVA_PACKAGE_NAME
 	atts.XtencilType = "FEDS"
 	atts.Designerversion = "2.8.4e"
 	atts.Owner = design.DesignMeta.HiddenSchema.OrgName
 	atts.Displayer = "TabPanel"
+	atts.Name = jackalope_service.Documentation(properties.Document)
+	atts.JavaName = strings.ToLower(string(atts.Name[0])) + atts.Name[1:]
 	return atts
 }
 

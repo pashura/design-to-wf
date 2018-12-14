@@ -15,7 +15,7 @@ var designName = "testyTestTest_test_nikita_RSX_7.7_Invoices_to_X12_4010_Transac
 var repo = "testDesignToWf.web"
 var branch = "awesome_branch"
 
-func Run() {
+func Run(javaPackageName string) {
 
 	fmt.Println("Fetching design...")
 	rawDesign := td_service.DesignObject(orgId, designName, properties.Token)
@@ -32,7 +32,7 @@ func Run() {
 
 	fmt.Println("Removing non visible elements...")
 	design := td_service.RemoveNonVisible(rawDesign)
-	des := design_to_xtl_service.ConvertDesignToXtl(design)
+	des := design_to_xtl_service.ConvertDesignToXtl(design, javaPackageName)
 
 	fmt.Printf("Publishing xtl to branch: %v...", branch)
 	xd_service.XDService(des, repo, branch, properties.Token)
