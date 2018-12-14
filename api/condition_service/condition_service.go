@@ -7,33 +7,63 @@ import (
 	"strings"
 )
 
-var VALIDATIONS map[string][]design_structs.Validation
-
-func ProcessValidationsDesign(design design_structs.Design) map[string][]design_structs.Validation {
-	VALIDATIONS = make(map[string][]design_structs.Validation)
-	findValidations(design.Children, "")
-	return VALIDATIONS
+func DesignValidations(design design_structs.Design) map[string][]design_structs.Validation {
+	validations := make(map[string][]design_structs.Validation)
+	findValidations(&validations, design.Children, "")
+	return validations
 }
 
-func findValidations(children []design_structs.Object, ediPath string) {
-	for i := range children {
-		child := children[i]
+func ExtraRecords(design design_structs.Design) []string {
+	extraRecords := make([]string, 0)
+	findExtraRecords(&extraRecords, design.Children, "")
+	return extraRecords
+}
+
+func findExtraRecords(extraRecords *[]string, children []design_structs.Object, ediPath string) {
+	for _, child := range children {
 		if len(child.Children) > 0 {
-			ediElement := getEdiPathDesign(child.Name)
-			if checkOnDuplicates(ediElement, ediPath) {
-				ediPath += "/" + ediElement
+			ediPath = buildEdiPath(child, ediPath)
+			if child.DropExtraRecords && ifElementInSlice(ediPath, extraRecords) {
+				*extraRecords = append(*extraRecords, ediPath)
 			}
-			if len(child.Validation) > 0 {
-				VALIDATIONS[ediPath] = child.Validation
-			}
-			findValidations(child.Children, ediPath)
+			findExtraRecords(extraRecords, child.Children, ediPath)
 		}
 	}
 }
 
+func ifElementInSlice(element string, testSlice *[]string) bool{
+	for _, testElement := range *testSlice{
+		if testElement == element{
+			return true
+		}
+	}
+	return false
+}
+
+func findValidations(validations *map[string][]design_structs.Validation, children []design_structs.Object, ediPath string) {
+	for _, child := range children {
+		if len(child.Children) > 0 {
+			ediPath = buildEdiPath(child, ediPath)
+			if len(child.Validation) > 0 {
+				(*validations)[ediPath] = child.Validation
+			}
+			findValidations(validations, child.Children, ediPath)
+		}
+	}
+}
+
+func buildEdiPath(child design_structs.Object, ediPath string) string {
+	ediElement := getEdiPathDesign(child.Name)
+	if checkOnDuplicates(ediElement, ediPath) {
+		ediPath += "/" + ediElement
+	}
+	return ediPath
+}
+
 func getEdiPathDesign(name string) string {
-	if len(strings.Split(name, "-")) > 1 {
-		return strings.Split(name, "-")[1]
+	ediPathChunks := strings.Split(name, "-")
+	if len(ediPathChunks) > 1 {
+		return ediPathChunks[1]
 	} else {
 		return name
 	}
