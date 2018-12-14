@@ -3,15 +3,16 @@ package design_to_xtl_service
 import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
-	"github.com/pashura/design-to-wf/api/edi_info_service"
-	"github.com/pashura/design-to-wf/api/names_service"
+	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
+	"github.com/pashura/design-to-wf/api/names_service"
 	"strings"
 	"time"
 )
 
 var JAVA_PACKAGE_NAME string
 var SYS_DATE string
+var DATA_TYPES map[string]string
 
 func ConvertDesignToXtl(design design_structs.Design) xtl_structs.Xtl {
 	setupConstants(design)
@@ -21,11 +22,24 @@ func ConvertDesignToXtl(design design_structs.Design) xtl_structs.Xtl {
 func setupConstants(design design_structs.Design) {
 	JAVA_PACKAGE_NAME = buildJavaPackageName(design.DesignMeta.HiddenSchema.OrgName)
 	SYS_DATE = time.Now().Format("01/02/2006")
+	DATA_TYPES = map[string]string{
+		"String": "JString",
+		"StringSet": "JMappedSet",
+		"Time": "JTime",
+		"Date": "JDate",
+		"Integer": "JInteger",
+		"Decimal": "JDouble",
+	}
 }
 func buildJavaPackageName(orgName string) string {
 	companyNameChunks := strings.Split(orgName, "_")
 	for i, chunk := range companyNameChunks {
-		companyNameChunks[i] = strings.Title(strings.ToLower(chunk))
+		chunkInLower := strings.ToLower(chunk)
+		if i != 0 {
+			companyNameChunks[i] = strings.Title(chunkInLower)
+		} else {
+			companyNameChunks[i] = chunkInLower
+		}
 	}
 	return strings.Join(companyNameChunks, "")
 }
@@ -137,15 +151,24 @@ func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 
 func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
-	//atts.Mandatory = designObject.Mandatory
+	if designObject.MinOccurs == "1" {
+		atts.Mandatory = "Y"
+	} else {
+		atts.Mandatory = "N"
+	}
 	atts.Edi = "Y"
-	atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
-	atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
 	atts.Enable = "Y"
 	atts.MinLength = designObject.MinLength
 	atts.Editable = "Y"
 	atts.MaxLength = designObject.MaxLength
 	atts.Display = "Y"
+	atts.DefaultValue = designObject.DefaultValue
+	if len(designObject.Attributes) > 0 {
+		atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
+		atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid)
+		atts.ReferenceNum = designObject.Attributes[0].EDIid
+		atts.DataType = DATA_TYPES[designObject.Attributes[0].DisplayName]
+	}
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
 }
