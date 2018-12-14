@@ -19,7 +19,7 @@ func TestConvertDesignToXtlBaseChecks(t *testing.T) {
 	if resultXtl.Infile != "" {
 		t.Error(resultXtl.Infile)
 	}
-	if resultXtl.Repo != "TestOrgName.web" {
+	if resultXtl.Repo != "testOrgName.web" {
 		t.Error(resultXtl.Repo)
 	}
 	if resultXtl.Branch != "new_form" {
@@ -62,6 +62,7 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	expField.Atts.Display = "Y"
 	expField.Atts.MinLength = "1"
 	expField.Atts.MaxLength = "8"
+	expField.Atts.Mandatory = "N"
 	expField.Name = "FIELDDEF"
 	expGroup.Children = []xtl_structs.Element{expField}
 	testDesign := design_structs.Design{}
@@ -76,6 +77,6 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	resultXtl := ConvertDesignToXtl(testDesign)
 
 	if !reflect.DeepEqual(resultXtl.Input.Children[0].Children[0], expGroup) {
-		t.Error(resultXtl.Input.Children[0].Children[0], expGroup)
+		t.Errorf("\nexpected: %v\n  actual: %v", resultXtl.Input.Children[0].Children[0], expGroup)
 	}
 }

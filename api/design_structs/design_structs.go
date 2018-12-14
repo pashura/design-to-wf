@@ -17,6 +17,7 @@ type Object struct {
 	Base                string               `json:"base"`
 	Name                string               `json:"name"`
 	ElementType         string               `json:"elementType"`
+	DefaultValue        string               `json:"defaultValue"`
 	DisplayName         string               `json:"displayName"`
 	MinOccurs           string               `json:"minOccurs"`
 	MaxOccurs           string               `json:"maxOccurs"`

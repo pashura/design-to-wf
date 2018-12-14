@@ -26,7 +26,7 @@ func Run() {
 
 	properties.Key = fmt.Sprintf("txn/jackalope/edispec/%v_%v/%v%v_%v.xsd",
 		properties.Version, properties.Format, properties.Version, properties.Format,
-		properties.Document)
+		properties.Document[len(properties.Document)-3:])
 
 	jackalope_service.S3Service(properties.S3bucket, properties.Key)
 
