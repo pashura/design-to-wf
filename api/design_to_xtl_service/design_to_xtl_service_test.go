@@ -19,7 +19,7 @@ func TestConvertDesignToXtlBaseChecks(t *testing.T) {
 	if resultXtl.Infile != "" {
 		t.Error(resultXtl.Infile)
 	}
-	if resultXtl.Repo != "TestOrgName.web" {
+	if resultXtl.Repo != "testOrgName.web" {
 		t.Error(resultXtl.Repo)
 	}
 	if resultXtl.Branch != "new_form" {

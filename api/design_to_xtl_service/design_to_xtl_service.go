@@ -34,7 +34,12 @@ func setupConstants(design design_structs.Design) {
 func buildJavaPackageName(orgName string) string {
 	companyNameChunks := strings.Split(orgName, "_")
 	for i, chunk := range companyNameChunks {
-		companyNameChunks[i] = strings.Title(strings.ToLower(chunk))
+		chunkInLower := strings.ToLower(chunk)
+		if i != 0 {
+			companyNameChunks[i] = strings.Title(chunkInLower)
+		} else {
+			companyNameChunks[i] = chunkInLower
+		}
 	}
 	return strings.Join(companyNameChunks, "")
 }
