@@ -1,7 +1,13 @@
 package main
 
-import "github.com/pashura/design-to-wf/api"
+import (
+	"flag"
+	"github.com/pashura/design-to-wf/api"
+)
 
 func main() {
-	api.Run()
+	javaPackageName := flag.String("repo", "testPackage", "Java Package Name")
+	flag.Parse()
+
+	api.Run(*javaPackageName)
 }

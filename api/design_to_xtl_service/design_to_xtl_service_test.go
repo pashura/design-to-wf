@@ -18,14 +18,20 @@ func MockDocumentation(key string) string {
 	return "mocked documentation"
 }
 
+func MockQualifierDescription(key, qual string) string {
+	return "mocked qualifier description"
+}
+
 func TestConvertDesignToXtlBaseChecks(t *testing.T) {
 
 	names_service.Documentation = MockDocumentation
+	QualifierDescription = MockQualifierDescription
+	Documentation = MockDocumentation
 	hiddenMeta := design_structs.Schematype{OrgName: "TEST_ORG_NAME"}
 	designMeta := design_structs.DesignMeta{HiddenSchema: hiddenMeta}
 	testDesign := design_structs.Design{DesignMeta: designMeta}
 	testDesign.Children = []design_structs.Object{}
-	resultXtl := ConvertDesignToXtl(testDesign)
+	resultXtl := ConvertDesignToXtl(testDesign, "testOrgName")
 
 	if resultXtl.Infile != "" {
 		t.Error(resultXtl.Infile)
@@ -58,6 +64,8 @@ func TestConvertDesignToXtlBaseChecks(t *testing.T) {
 
 func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	names_service.Documentation = MockDocumentation
+	QualifierDescription = MockQualifierDescription
+	Documentation = MockDocumentation
 	expGroup := xtl_structs.Element{}
 	expField := xtl_structs.Element{}
 
@@ -90,7 +98,7 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	testDesignGroup.MaxOccurs = "2"
 	testDesignGroup.Children = []design_structs.Object{testDesignElement}
 	testDesign.Children = []design_structs.Object{testDesignGroup}
-	resultXtl := ConvertDesignToXtl(testDesign)
+	resultXtl := ConvertDesignToXtl(testDesign, "name")
 
 	if !reflect.DeepEqual(resultXtl.Input.Children[0].Children[0], expGroup) {
 		t.Errorf("\nexpected: %v\n  actual: %v", resultXtl.Input.Children[0].Children[0], expGroup)
