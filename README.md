@@ -78,6 +78,12 @@ After you have pulled the project run navigate to the project home:
 `cd $GOPATH/src/github.com/mpashura/design-to-wf`
 Once there get everything setup by running: ``
 
+## 3 Running unit tests
+
+```bash
+go test ./...
+```
+
 ..to be continued....
 
 

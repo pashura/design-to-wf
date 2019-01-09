@@ -24,14 +24,18 @@ func Run() {
 	properties.Version = rawDesign.DesignMeta.ViewedSchema.Version
 	properties.Document = rawDesign.DesignMeta.ViewedSchema.Document
 
-	properties.Key = fmt.Sprintf("txn/jackalope/edispec/%v_%v/%v%v_%v.xsd",
+	properties.SchemaKey = fmt.Sprintf("txn/jackalope/edispec/%v_%v/%v%v_%v.xsd",
 		properties.Version, properties.Format, properties.Version, properties.Format,
 		properties.Document[len(properties.Document)-3:])
 
-	jackalope_service.S3Service(properties.S3bucket, properties.Key)
+	properties.EnumKey = fmt.Sprintf("XSD/%v/%v/%v.enums",
+		properties.Format, properties.Version, properties.Document)
+
+	jackalope_service.S3Service(properties.SchemaKey, properties.EnumKey)
 
 	fmt.Println("Removing non visible elements...")
 	design := td_service.RemoveNonVisible(rawDesign)
+	design_to_xtl_service.ConvertDesignToXtl(design)
 	des := design_to_xtl_service.ConvertDesignToXtl(design)
 
 	fmt.Printf("Publishing xtl to branch: %v...", branch)

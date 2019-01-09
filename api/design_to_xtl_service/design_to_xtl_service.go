@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
+	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/names_service"
-	"github.com/pashura/design-to-wf/api/schema_enum_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
@@ -181,13 +181,14 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 }
 
 func qualifiers(elementName, qualifiers string) string {
-	groupName := fmt.Sprintf("Segment-%v", elementName[:len(elementName)-2])
+	//groupName := fmt.Sprintf("Segment-%v", elementName[:len(elementName)-2])
 
 	result := make([]string, 0)
 	qualifierList := strings.Split(qualifiers, ",")
 	for i := 0; i < len(qualifierList); i++ {
 		qual := strings.TrimSpace(string(qualifierList[i]))
-		description := schema_enum_service.GetSchemaEnums(groupName, elementName, qual)
+		//description := schema_enum_service.GetSchemaEnums(groupName, elementName, qual)
+		description := jackalope_service.QualifierDescription(elementName, qual)
 		result = append(result, fmt.Sprintf("%v: %v", qual, description))
 	}
 	fmt.Println()
