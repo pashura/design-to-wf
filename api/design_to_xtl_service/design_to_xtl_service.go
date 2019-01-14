@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
+	"github.com/pashura/design-to-wf/api/design_to_xtl_service/structure_levels_service"
 	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/properties"
@@ -82,7 +83,7 @@ func createDocumentDefAtts(design design_structs.Design) xtl_structs.Atts {
 	atts.Owner = design.DesignMeta.HiddenSchema.OrgName
 	atts.Displayer = "TabPanel"
 	atts.Name = jackalope_service.Documentation(properties.Document)
-	atts.JavaName = strings.ToLower(string(atts.Name[0])) + atts.Name[1:]
+	atts.JavaName = names_service.CreateJavaName(atts.Name, "")
 	return atts
 }
 
@@ -100,7 +101,20 @@ func createStructure(design design_structs.Design) []xtl_structs.Element {
 	for i := range design.Children {
 		child := design.Children[i]
 		group := createGroup(child)
+		elements = createStructureLevels(elements, group)
+	}
+	return elements
+}
+
+func createStructureLevels(elements []xtl_structs.Element, group xtl_structs.Element) []xtl_structs.Element {
+	structureLevel, ok := structure_levels_service.GetStructureLevelByItsFirstSegmentTag(group.Children[0].Atts.SegmentTag)
+	if ok {
+		group.Atts.Name = structureLevel
+		group.Atts.JavaName = names_service.CreateJavaName(structureLevel, "")
 		elements = append(elements, group)
+	} else {
+		lastElementIndex := len(elements)-1
+		elements[lastElementIndex].Children = append(elements[lastElementIndex].Children, group)
 	}
 	return elements
 }
@@ -113,7 +127,14 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 		for i := range designObject.Children {
 			currentGroup = designObject
 			child := designObject.Children[i]
-			newGroup.Children = append(newGroup.Children, createGroup(child))
+			if designObject.GetSegmentName() != child.GetSegmentName() {
+				newGroup.Children = append(newGroup.Children, createGroup(child))
+			} else {
+				for k := range child.Children {
+					miniChild := child.Children[k]
+					newGroup.Children = append(newGroup.Children, createGroup(miniChild))
+				}
+			}
 		}
 		return newGroup
 	} else {
@@ -121,27 +142,28 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 	}
 }
 
-func createElement(designObject design_structs.Object) xtl_structs.Element {
-	newElement := xtl_structs.Element{}
-	newElement.Atts = createElementAtts(designObject)
-	newElement.Name = "FIELDDEF"
-	return newElement
-}
-
 func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts := xtl_structs.Atts{}
 	atts.Enable = "Y"
 	atts.Min = designObject.MinOccurs
 	atts.Name = names_service.CreateName(designObject.Name)
-	atts.JavaName = names_service.CreateJavaName(designObject.Name, currentGroup.Name)
+	atts.JavaName = names_service.CreateJavaName(atts.Name, designObject.Name)
 	atts.Justification = "Left"
 	if len(designObject.MaxOccurs) > 0 {
 		atts.Max = designObject.MaxOccurs
 	} else {
-		atts.Max = designObject.MinOccurs
+		atts.Min = "1"
+		atts.Max = "1"
 	}
 	atts.Display = "Y"
 	return atts
+}
+
+func createElement(designObject design_structs.Object) xtl_structs.Element {
+	newElement := xtl_structs.Element{}
+	newElement.Atts = createElementAtts(designObject)
+	newElement.Name = "FIELDDEF"
+	return newElement
 }
 
 func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
@@ -157,15 +179,16 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Display = "Y"
 	atts.DefaultValue = designObject.DefaultValue
 	if len(designObject.Attributes) > 0 {
-		atts.Name = names_service.CreateName(designObject.Attributes[0].EDIid)
-		atts.JavaName = names_service.CreateJavaName(designObject.Attributes[0].EDIid, currentGroup.Name)
-		atts.ReferenceNum = designObject.Attributes[0].EDIid
-		atts.DataType = DATA_TYPES[designObject.Attributes[0].DisplayName]
-		if designObject.Attributes[0].HasEnum {
+		designObjectAttributes := designObject.Attributes[len(designObject.Attributes)-1]
+		atts.Name = names_service.CreateName(designObjectAttributes.EDIid)
+		atts.JavaName = names_service.CreateJavaName(atts.Name, currentGroup.Name)
+		atts.ReferenceNum = designObjectAttributes.EDIid
+		atts.DataType = DATA_TYPES[designObjectAttributes.DisplayName]
+		if designObjectAttributes.HasEnum {
 			atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
 		}
-		atts.MinLength = designObject.Attributes[0].MinLength
-		atts.MaxLength = designObject.Attributes[0].MaxLength
+		atts.MinLength = designObjectAttributes.MinLength
+		atts.MaxLength = designObjectAttributes.MaxLength
 	}
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts

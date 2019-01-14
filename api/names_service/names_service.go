@@ -12,13 +12,12 @@ var elements = make(map[string]int)
 var currentSegment string
 
 
-func CreateName(elementName string) string{
-	return jackalope_service.Documentation(normalizeElementName(elementName) )
+func CreateName(designObjectName string) string{
+	return jackalope_service.Documentation(normalizeElementName(designObjectName) )
 }
 
 func CreateJavaName(elementName string, currentSegment string) string {
-	data := jackalope_service.Documentation(normalizeElementName(elementName) )
-	javaName := removeNonLiteralSymbols(data)
+	javaName := removeNonLiteralSymbols(elementName)
 	javaName = lowerAllLetters(javaName)
 	javaName = upperFirstLetters(javaName)
 	javaName = removeSpaces(javaName)

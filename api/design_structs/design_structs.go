@@ -1,5 +1,7 @@
 package design_structs
 
+import "strings"
+
 type Design struct {
 	HasEnum     bool         `json:"hasEnum"`
 	Name        string       `json:"name"`
@@ -24,6 +26,7 @@ type Object struct {
 	MinLength           string               `json:"minLength"`
 	ID                  int64                `json:"id"`
 	Visible             bool                 `json:"visible"`
+	Sourcing 			Sourcing 			 `json:"sourcing"`
 	Qualifiers          string               `json:"qualifiers"`
 	EDIid               string               `json:"ediId"`
 	Validation          []Validation         `json:"validation"`
@@ -34,6 +37,10 @@ type Object struct {
 	DropExtraRecords    bool                 `json:"dropExtraRecords"`
 	Attributes          []Object             `json:"attributes"`
 	Children            []Object             `json:"children"`
+}
+
+type Sourcing struct {
+	Location		string		`json:"location"`
 }
 
 type DesignMeta struct {
@@ -72,4 +79,11 @@ type QualifierCondition struct {
 	Converts  string `json:"converts"`
 	Qualifier string `json:"qualifier"`
 	MinOccurs int    `json:"minOccurs"`
+}
+
+func (o Object) GetSegmentName() string {
+	if strings.Contains(o.Name, "-"){
+		 return o.Name[strings.Index(o.Name,"-")+1:]
+	}
+	return ""
 }
