@@ -31,9 +31,9 @@ func findExtraRecords(extraRecords *[]string, children []design_structs.Object, 
 	}
 }
 
-func ifElementInSlice(element string, testSlice *[]string) bool{
-	for _, testElement := range *testSlice{
-		if testElement == element{
+func ifElementInSlice(element string, testSlice *[]string) bool {
+	for _, testElement := range *testSlice {
+		if testElement == element {
 			return true
 		}
 	}

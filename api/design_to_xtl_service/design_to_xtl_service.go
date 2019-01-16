@@ -7,7 +7,6 @@ import (
 	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/properties"
-	"github.com/pashura/design-to-wf/api/schema_enum_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
 	"strings"
 	"time"
@@ -18,6 +17,8 @@ var SYS_DATE string
 var DATA_TYPES map[string]string
 
 var currentGroup design_structs.Object
+var QualifierDescription = jackalope_service.QualifierDescription
+var Documentation = jackalope_service.Documentation
 
 func ConvertDesignToXtl(design design_structs.Design, javaPackageName string) xtl_structs.Xtl {
 	JAVA_PACKAGE_NAME = javaPackageName
@@ -81,7 +82,7 @@ func createDocumentDefAtts(design design_structs.Design) xtl_structs.Atts {
 	atts.Designerversion = "2.8.4e"
 	atts.Owner = design.DesignMeta.HiddenSchema.OrgName
 	atts.Displayer = "TabPanel"
-	atts.Name = jackalope_service.Documentation(properties.Document)
+	atts.Name = Documentation(properties.Document)
 	atts.JavaName = strings.ToLower(string(atts.Name[0])) + atts.Name[1:]
 	return atts
 }
@@ -172,13 +173,12 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 }
 
 func qualifiers(elementName, qualifiers string) string {
-	groupName := fmt.Sprintf("Segment-%v", elementName[:len(elementName)-2])
 
 	result := make([]string, 0)
 	qualifierList := strings.Split(qualifiers, ",")
 	for i := 0; i < len(qualifierList); i++ {
 		qual := strings.TrimSpace(string(qualifierList[i]))
-		description := schema_enum_service.GetSchemaEnums(groupName, elementName, qual)
+		description := QualifierDescription(elementName, qual)
 		result = append(result, fmt.Sprintf("%v: %v", qual, description))
 	}
 	fmt.Println()
