@@ -1,1 +1,1 @@
-package jackalope_service_test
+package jackalope_service

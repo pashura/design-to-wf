@@ -1,0 +1,18 @@
+{
+  "Segment-REF": {
+    "REF01": [
+      {
+        "documentation": "Internal Vendor Number",
+        "enum": "IA"
+      },
+      {
+        "documentation": "General Product Form",
+        "enum": "02"
+      },
+      {
+        "documentation": "Product",
+        "enum": "08"
+      }
+    ]
+  }
+}
