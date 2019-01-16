@@ -38,22 +38,8 @@ func isInt(s string) bool {
 }
 
 func Documentation(ref string) string {
-	var filename string
-	if TestingMode == true {
-		filename = "xml_parser_test_resources.xml"
-	} else {
-		filename = "api/jackalope_service/schema.xsd"
-	}
 
-	xmlFile, err := os.Open(filename)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	defer xmlFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(xmlFile)
+	var byteValue = readFileBasedOnMode("Documentation")
 
 	var schema xmlSchema
 
@@ -90,22 +76,7 @@ type Enums []struct {
 
 func QualifierDescription(name, qualifier string) string {
 
-	var filename string
-	if TestingMode == true {
-		filename = "enums_test_resources.json"
-	} else {
-		filename = "api/jackalope_service/enums.json"
-	}
-
-	jsonFile, err := os.Open(filename)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	defer jsonFile.Close()
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	var byteValue = readFileBasedOnMode("QualifierDescription")
 
 	var dat map[string]interface{}
 	if err := json.Unmarshal(byteValue, &dat); err != nil {
@@ -135,4 +106,31 @@ func QualifierDescription(name, qualifier string) string {
 	}
 
 	return ""
+}
+
+func readFileBasedOnMode(funcName string) []byte {
+	var filename string
+
+	switch {
+	case TestingMode && funcName == "Documentation":
+		filename = "xml_parser_test_resources.xml"
+	case TestingMode && funcName == "QualifierDescription":
+		filename = "enums_test_resources.json"
+	case !TestingMode && funcName == "Documentation":
+		filename = "api/jackalope_service/schema.xsd"
+	case !TestingMode && funcName == "QualifierDescription":
+		filename = "api/jackalope_service/enums.json"
+	default:
+		filename = ""
+	}
+
+	jsonFile, err := os.Open(filename)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+	return byteValue
 }

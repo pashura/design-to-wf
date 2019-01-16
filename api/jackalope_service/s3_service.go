@@ -43,6 +43,7 @@ func S3Service(keys ...string) {
 		f, err := os.Create(filename)
 		if err != nil {
 			fmt.Printf("failed to create file %q, %v", filename, err)
+			continue
 		}
 
 		operationDone := make(chan bool)
