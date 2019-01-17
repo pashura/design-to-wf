@@ -17,8 +17,7 @@ func CreateName(elementName string) string {
 }
 
 func CreateJavaName(elementName string, currentSegment string) string {
-	data := Documentation(normalizeElementName(elementName))
-	javaName := removeNonLiteralSymbols(data)
+	javaName := removeNonLiteralSymbols(elementName)
 	javaName = lowerAllLetters(javaName)
 	javaName = upperFirstLetters(javaName)
 	javaName = removeSpaces(javaName)

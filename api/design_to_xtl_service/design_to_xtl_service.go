@@ -108,13 +108,13 @@ func createStructure(design design_structs.Design) []xtl_structs.Element {
 }
 
 func createStructureLevels(elements []xtl_structs.Element, group xtl_structs.Element) []xtl_structs.Element {
-	structureLevel, ok := structure_levels_service.GetStructureLevelByItsFirstSegmentTag(group.Children[0].Atts.SegmentTag)
+	structureLevel, ok := structure_levels_service.StructureLevelByItsFirstSegmentTag(group.Children[0].Atts.SegmentTag)
 	if ok {
 		group.Atts.Name = structureLevel
 		group.Atts.JavaName = names_service.CreateJavaName(structureLevel, "")
 		elements = append(elements, group)
 	} else {
-		lastElementIndex := len(elements)-1
+		lastElementIndex := len(elements) - 1
 		elements[lastElementIndex].Children = append(elements[lastElementIndex].Children, group)
 	}
 	return elements
@@ -128,7 +128,7 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 		for i := range designObject.Children {
 			currentGroup = designObject
 			child := designObject.Children[i]
-			if designObject.GetSegmentName() != child.GetSegmentName() {
+			if designObject.SegmentName() != child.SegmentName() {
 				newGroup.Children = append(newGroup.Children, createGroup(child))
 			} else {
 				for k := range child.Children {
@@ -179,18 +179,17 @@ func createElementAtts(designObject design_structs.Object) xtl_structs.Atts {
 	atts.Editable = "Y"
 	atts.Display = "Y"
 	atts.DefaultValue = designObject.DefaultValue
-	if len(designObject.Attributes) > 0 {
-		designObjectAttributes := designObject.Attributes[len(designObject.Attributes)-1]
-		atts.Name = names_service.CreateName(designObjectAttributes.EDIid)
-		atts.JavaName = names_service.CreateJavaName(atts.Name, currentGroup.Name)
-		atts.ReferenceNum = designObjectAttributes.EDIid
-		atts.DataType = DATA_TYPES[designObjectAttributes.DisplayName]
-		if designObjectAttributes.HasEnum {
-			atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
-		}
-		atts.MinLength = designObjectAttributes.MinLength
-		atts.MaxLength = designObjectAttributes.MaxLength
+	designObjectAttributes := designObject.RestrictionAttributes()
+	atts.Name = names_service.CreateName(designObjectAttributes.EDIid)
+	atts.JavaName = names_service.CreateJavaName(atts.Name, currentGroup.Name)
+	atts.ReferenceNum = designObjectAttributes.EDIid
+	atts.DataType = DATA_TYPES[designObjectAttributes.DisplayName]
+	atts.MinLength = designObjectAttributes.MinLength
+	atts.MaxLength = designObjectAttributes.MaxLength
+	if designObjectAttributes.HasEnum {
+		atts.Choices = qualifiers(designObject.Name, designObject.Qualifiers)
 	}
+
 	atts.SegmentTag, atts.Position, atts.SubPos = edi_info_service.EdiInfo(designObject.Name)
 	return atts
 }
