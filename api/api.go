@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service"
+	"github.com/pashura/design-to-wf/api/design_to_xtl_service/structure_levels_service"
 	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/properties"
 	"github.com/pashura/design-to-wf/api/td_service"
@@ -35,7 +36,7 @@ func Run(javaPackageName string) {
 
 	fmt.Println("Removing non visible elements...")
 	design := td_service.RemoveNonVisible(rawDesign)
-
+	structure_levels_service.StructureLevelsFromDesign(design)
 	des := design_to_xtl_service.ConvertDesignToXtl(design, javaPackageName)
 
 	fmt.Printf("Publishing xtl to branch: %v...", branch)

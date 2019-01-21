@@ -1,7 +1,7 @@
 package properties
 
 const S3bucketJackalope = "sps-build-deploy"
-const S3bucketMasterTempletes = "dev-master-templates-xml"
+const S3bucketMasterTemplates = "dev-master-templates-xml"
 
 const Token = ""
 

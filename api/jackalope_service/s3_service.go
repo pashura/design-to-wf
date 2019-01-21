@@ -31,7 +31,7 @@ func S3Service(keys ...string) {
 		switch {
 		case strings.HasPrefix(keys[i], "XSD"):
 			filename = "api/jackalope_service/enums.json"
-			bucket = properties.S3bucketMasterTempletes
+			bucket = properties.S3bucketMasterTemplates
 		case strings.HasPrefix(keys[i], "txn"):
 			filename = "api/jackalope_service/schema.xsd"
 			bucket = properties.S3bucketJackalope

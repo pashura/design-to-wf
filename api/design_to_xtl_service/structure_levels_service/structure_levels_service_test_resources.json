@@ -1,0 +1,95 @@
+{
+  "hasEnum": false,
+  "elementType": "element",
+  "name": "Transaction-810",
+  "minOccurs": "1",
+  "visible": true,
+  "children": [
+    {
+      "hasEnum": false,
+      "elementType": "element",
+      "name": "Segment-BIG",
+      "minOccurs": "1",
+      "visible": true,
+      "children": [
+        {
+          "hasEnum": false,
+          "elementType": "element",
+          "name": "BIG01",
+          "sourcing": {
+            "location": "Invoice/Header/InvoiceHeader/InvoiceDate"
+          }
+        },
+        {
+          "hasEnum": false,
+          "elementType": "element",
+          "name": "BIG02",
+          "sourcing": {
+            "location": "Invoice/Header/InvoiceHeader/InvoiceNumber"
+          }
+        },
+        {
+          "hasEnum": false,
+          "elementType": "element",
+          "name": "BIG03",
+          "sourcing": {
+            "location": "Invoice/Header/InvoiceHeader/PurchaseOrderDate"
+          }
+        }
+      ]
+    },
+    {
+      "hasEnum": false,
+      "elementType": "element",
+      "name": "Loop-IT1",
+      "children": [
+        {
+          "hasEnum": false,
+          "elementType": "element",
+          "name": "Segment-IT1",
+          "children": [
+            {
+              "hasEnum": false,
+              "elementType": "element",
+              "name": "IT101",
+              "sourcing": {
+                "location": "Invoice/LineItem/LineItemNumber"
+              }
+            },
+            {
+              "hasEnum": false,
+              "elementType": "element",
+              "name": "IT102",
+              "sourcing": {
+                "location": "Invoice/LineItem/Qty"
+              }
+            },
+            {
+              "hasEnum": false,
+              "elementType": "element",
+              "name": "IT103",
+              "sourcing": {
+                "location": "Invoice/LineItem/UOM"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "hasEnum": false,
+      "elementType": "element",
+      "name": "Segment-TDS",
+      "children": [
+        {
+          "hasEnum": false,
+          "elementType": "element",
+          "name": "TDS01",
+          "sourcing": {
+            "location": "Invoice/Summary/TotalAmount"
+          }
+        }
+      ]
+    }
+  ]
+}

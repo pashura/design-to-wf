@@ -2,6 +2,7 @@ package design_to_xtl_service
 
 import (
 	"github.com/pashura/design-to-wf/api/design_structs"
+	"github.com/pashura/design-to-wf/api/design_to_xtl_service/structure_levels_service"
 	"github.com/pashura/design-to-wf/api/jackalope_service"
 	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
@@ -84,23 +85,32 @@ func TestConvertDesignToXtlCreatesCorrectXtlStructure(t *testing.T) {
 	expField.Atts.Mandatory = "N"
 	expField.Atts.JavaName = "mockedDocumentation1"
 	expField.Atts.Name = "mocked documentation"
-	expGroup.Atts.JavaName = "mockedDocumentation"
-	expGroup.Atts.Name = "mocked documentation"
+	expField.Atts.SegmentTag = "BIG"
+	expField.Atts.Position = "01"
+	expGroup.Atts.JavaName = "header"
+	expGroup.Atts.Name = "Header"
 	expField.Name = "FIELDDEF"
 	expGroup.Children = []xtl_structs.Element{expField}
 	testDesign := design_structs.Design{}
 	testDesignElement := design_structs.Object{}
 	testDesignElement.Attributes = []design_structs.Object{{}}
+	testDesignElement.Attributes[0].ElementType = "restriction"
 	testDesignElement.Attributes[0].MinLength = "1"
 	testDesignElement.Attributes[0].MaxLength = "8"
+	testDesignElement.Sourcing = design_structs.Sourcing{}
+	testDesignElement.Sourcing.Location = "Invoice/Header/InvoiceHeader/PurchaseOrderDate"
+	testDesignElement.Name = "BIG01"
 	testDesignGroup := design_structs.Object{}
 	testDesignGroup.MinOccurs = "1"
 	testDesignGroup.MaxOccurs = "2"
+	testDesignGroup.Name = "Segment-SEG"
 	testDesignGroup.Children = []design_structs.Object{testDesignElement}
 	testDesign.Children = []design_structs.Object{testDesignGroup}
+
+	structure_levels_service.StructureLevelsFromDesign(testDesign)
 	resultXtl := ConvertDesignToXtl(testDesign, "name")
 
 	if !reflect.DeepEqual(resultXtl.Input.Children[0].Children[0], expGroup) {
-		t.Errorf("\nexpected: %v\n  actual: %v", resultXtl.Input.Children[0].Children[0], expGroup)
+		t.Errorf("\nactual: %v\n  expected: %v", resultXtl.Input.Children[0].Children[0], expGroup)
 	}
 }

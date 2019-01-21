@@ -6,6 +6,7 @@ import (
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 const url = "https://design-ui-api.dev.spsc.io/company_designs"
@@ -69,6 +70,7 @@ func createChildren(childrenObject design_structs.Object) design_structs.Object 
 	newChildrenObject.DesignMeta = childrenObject.DesignMeta
 	newChildrenObject.Attributes = childrenObject.Attributes
 	newChildrenObject.MinOccurs = childrenObject.MinOccurs
+	newChildrenObject.MaxOccurs = strings.Replace(childrenObject.MaxOccurs, "unbounded", "200000", -1)
 	newChildrenObject.Name = childrenObject.Name
 	newChildrenObject.Base = childrenObject.Base
 	newChildrenObject.DisplayName = childrenObject.DisplayName
@@ -82,6 +84,7 @@ func createChildren(childrenObject design_structs.Object) design_structs.Object 
 	newChildrenObject.QualifierConditions = childrenObject.QualifierConditions
 	newChildrenObject.Qualifiers = childrenObject.Qualifiers
 	newChildrenObject.Validation = childrenObject.Validation
+	newChildrenObject.Sourcing = childrenObject.Sourcing
 	newChildrenObject.Children = appendChildren(childrenObject.Children)
 
 	return newChildrenObject
