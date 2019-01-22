@@ -8,6 +8,7 @@ import (
 	"github.com/pashura/design-to-wf/api/properties"
 	"github.com/pashura/design-to-wf/api/td_service"
 	"github.com/pashura/design-to-wf/api/xd_service"
+	"github.com/pashura/design-to-wf/api/xtl_services/rep_service"
 )
 
 var orgId = "320092678795032242107614176381310194095"
@@ -38,6 +39,8 @@ func Run(javaPackageName string) {
 	design := td_service.RemoveNonVisible(rawDesign)
 	structure_levels_service.StructureLevelsFromDesign(design)
 	des := design_to_xtl_service.ConvertDesignToXtl(design, javaPackageName)
+
+	rep_service.AddReps(des)
 
 	fmt.Printf("Publishing xtl to branch: %v...", branch)
 	xd_service.XDService(des, repo, branch, properties.Token)
