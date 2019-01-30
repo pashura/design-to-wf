@@ -85,6 +85,7 @@ func createChildren(childrenObject design_structs.Object) design_structs.Object 
 	newChildrenObject.Qualifiers = childrenObject.Qualifiers
 	newChildrenObject.Validation = childrenObject.Validation
 	newChildrenObject.Sourcing = childrenObject.Sourcing
+	newChildrenObject.DefaultValue = childrenObject.DefaultValue
 	newChildrenObject.Children = appendChildren(childrenObject.Children)
 
 	return newChildrenObject
@@ -94,7 +95,7 @@ func appendChildren(childrenObject []design_structs.Object) []design_structs.Obj
 
 	var newChildrenObject []design_structs.Object
 	for _, i := range childrenObject {
-		if i.Visible == true {
+		if i.Visible == true && i.Name != "" {
 			newChildrenObject = append(newChildrenObject, createChildren(i))
 		}
 	}

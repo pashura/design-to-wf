@@ -2,6 +2,9 @@ package design_to_xtl_service
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/pashura/design-to-wf/api/design_structs"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/edi_info_service"
 	"github.com/pashura/design-to-wf/api/design_to_xtl_service/structure_levels_service"
@@ -9,8 +12,6 @@ import (
 	"github.com/pashura/design-to-wf/api/names_service"
 	"github.com/pashura/design-to-wf/api/properties"
 	"github.com/pashura/design-to-wf/api/xtl_structs"
-	"strings"
-	"time"
 )
 
 var JAVA_PACKAGE_NAME string
@@ -102,13 +103,13 @@ func createStructure(design design_structs.Design) []xtl_structs.Element {
 	for i := range design.Children {
 		child := design.Children[i]
 		group := createGroup(child)
-		elements = createStructureLevels(elements, group)
+		elements = createRootStructureLevels(elements, group)
 	}
 	return elements
 }
 
-func createStructureLevels(elements []xtl_structs.Element, group xtl_structs.Element) []xtl_structs.Element {
-	structureLevel, ok := structure_levels_service.StructureLevelByItsFirstSegmentTag(group.Children[0].Atts.SegmentTag)
+func createRootStructureLevels(elements []xtl_structs.Element, group xtl_structs.Element) []xtl_structs.Element {
+	structureLevel, ok := structure_levels_service.StructureLevel(group)
 	if ok {
 		group.Atts.Name = structureLevel
 		group.Atts.JavaName = names_service.CreateJavaName(structureLevel, "")
@@ -125,22 +126,32 @@ func createGroup(designObject design_structs.Object) xtl_structs.Element {
 		newGroup := xtl_structs.Element{}
 		newGroup.Atts = createGroupAtts(designObject)
 		newGroup.Name = "GROUPDEF"
+
 		for i := range designObject.Children {
 			currentGroup = designObject
 			child := designObject.Children[i]
-			if designObject.SegmentName() != child.SegmentName() {
-				newGroup.Children = append(newGroup.Children, createGroup(child))
-			} else {
+			if designObject.IsLoop() && i == 0 {
 				for k := range child.Children {
 					miniChild := child.Children[k]
 					newGroup.Children = append(newGroup.Children, createGroup(miniChild))
 				}
+			} else {
+				newGroup.Children = append(newGroup.Children, createGroup(child))
 			}
 		}
-		return newGroup
+		return updateHierarchicalGroupAttsToStructureLevelAtts(newGroup)
 	} else {
 		return createElement(designObject)
 	}
+}
+
+func updateHierarchicalGroupAttsToStructureLevelAtts(group xtl_structs.Element) xtl_structs.Element {
+	structureLevel, ok := structure_levels_service.StructureLevelByHL(group)
+	if ok {
+		group.Atts.Name = structureLevel
+		group.Atts.JavaName = names_service.CreateJavaName(group.Atts.Name, "")
+	}
+	return group
 }
 
 func createGroupAtts(designObject design_structs.Object) xtl_structs.Atts {
@@ -201,7 +212,7 @@ func qualifiers(elementName, qualifiers string) string {
 	for i := 0; i < len(qualifierList); i++ {
 		qual := strings.TrimSpace(string(qualifierList[i]))
 		description := QualifierDescription(elementName, qual)
-		result = append(result, fmt.Sprintf("%v: %v", qual, description))
+		result = append(result, fmt.Sprintf("%v:%v", qual, description))
 	}
 	fmt.Println()
 

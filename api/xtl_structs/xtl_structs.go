@@ -84,10 +84,3 @@ type Atts struct {
 	FileType               string `json:"fileType,omitempty"`
 	Contents               string `json:"contents,omitempty"`
 }
-
-func (group Element) IsRepeatableGroup() bool {
-	if group.Name == "GROUPDEF" && group.Atts.Max != "1" {
-		return true
-	}
-	return false
-}

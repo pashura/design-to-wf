@@ -37,7 +37,7 @@ func Run(javaPackageName string) {
 
 	fmt.Println("Removing non visible elements...")
 	design := td_service.RemoveNonVisible(rawDesign)
-	structure_levels_service.StructureLevelsFromDesign(design)
+	structure_levels_service.DesignRootStructureLevelsFromSources(design)
 	des := design_to_xtl_service.ConvertDesignToXtl(design, javaPackageName)
 
 	rep_service.AddReps(des)
