@@ -22,8 +22,8 @@ func testDesignObject() design_structs.Design {
 	return design
 }
 
-func TestStructureLevelsFromDesign(t *testing.T) {
-	StructureLevelsFromDesign(testDesignObject())
+func TestDesignRootStructureLevelsFromSources(t *testing.T) {
+	DesignRootStructureLevelsFromSources(testDesignObject())
 
 	expectedValue := map[string]string{"Header": "BIG",
 		"LineItem": "IT1",
@@ -37,12 +37,12 @@ func TestStructureLevelsFromDesign(t *testing.T) {
 }
 
 func TestStructureLevelByItsFirstSegmentTag(t *testing.T) {
-	StructureLevelsFromDesign(testDesignObject())
+	DesignRootStructureLevelsFromSources(testDesignObject())
 
 	segmentTags := [3]string{"BIG", "IT1", "TDS"}
 
 	for _, segmentTag := range segmentTags {
-		_, ok := StructureLevelByItsFirstSegmentTag(segmentTag)
+		_, ok := structureLevelByItsFirstSegmentTag(segmentTag)
 		if !ok {
 			t.Error(segmentTag, structureLevels)
 		}

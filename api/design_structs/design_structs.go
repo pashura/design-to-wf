@@ -1,7 +1,5 @@
 package design_structs
 
-import "strings"
-
 type Design struct {
 	HasEnum     bool         `json:"hasEnum"`
 	Name        string       `json:"name"`
@@ -79,20 +77,4 @@ type QualifierCondition struct {
 	Converts  string `json:"converts"`
 	Qualifier string `json:"qualifier"`
 	MinOccurs int    `json:"minOccurs"`
-}
-
-func (o Object) SegmentName() string {
-	if strings.Contains(o.Name, "-") {
-		return o.Name[strings.Index(o.Name, "-")+1:]
-	}
-	return ""
-}
-
-func (o Object) RestrictionAttributes() Object {
-	for _, attr := range o.Attributes {
-		if attr.ElementType == "restriction" {
-			return attr
-		}
-	}
-	return Object{}
 }
